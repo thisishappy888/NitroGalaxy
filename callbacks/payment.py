@@ -3,7 +3,19 @@ from aiogram.types import Message, CallbackQuery, LabeledPrice, PreCheckoutQuery
 
 from keyboards import inline
 
+from send_mail import send_mail
+
+from dotenv import load_dotenv
+import os
+
+# Загрузка переменных из .env файла
+load_dotenv()
+
 router = Router()
+
+TO_EMAIL = os.getenv('TO_EMAIL')
+FROM_EMAIL = os.getenv('FROM_EMAIL')
+PASSWORD = os.getenv('PASSWORD')
 
 @router.callback_query(F.data == "telegram_premium")
 async def telegram_premium_handler(callback: CallbackQuery):
@@ -187,4 +199,11 @@ async def successful_payment(message: Message, bot: Bot):
 
 
     await bot.send_message(7773130966, f"Пользователь @{message.from_user.username} купил {product_title}")
+    send_mail(
+        subject="Тестовое письмо",
+        body=f"Пользователь @{message.from_user.username} купил {product_title}",
+        to_email=TO_EMAIL,
+        from_email=FROM_EMAIL,
+        password=PASSWORD
+    )
     
