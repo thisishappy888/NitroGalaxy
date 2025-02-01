@@ -43,19 +43,22 @@ async def premium_purchase(callback: CallbackQuery):
     if callback.data == "premium_3_months":
         title = "Telegram Premium на 3 месяца"
         amount = 2
+        payload="telegram_premium_3_months"
     elif callback.data == "premium_6_months":
         title = "Telegram Premium на 6 месяцев"
         amount = 1000
+        payload="telegram_premium_9_months"
     elif callback.data == "premium_1_year":
         title = "Telegram Premium на год"
         amount = 1500
+        payload="telegram_premium_1_year"
     else:
         return
 
     await callback.message.answer_invoice(
         title=title,
         description="Приобретается в виде подарка на аккаунт, что является безопасным способом получения. Покупателю необходимо сообщить только @username получателя!",
-        payload="access_to_private",
+        payload=payload,
         currency="XTR",
         prices=[LabeledPrice(label="XTR", amount=amount)],
         photo_url="https://storage.yandexcloud.net/s3-metaratings-storage/images/8a/73/8a739405a40aeaf8cbd31f3582686305.png"
@@ -177,4 +180,11 @@ async def successful_payment(message: Message, bot: Bot):
     await bot.refund_star_payment(
         message.from_user.id, message.successful_payment.telegram_payment_charge_id
     )
+
+    payment_info = message.successful_payment
+    # Получаем название товара из invoice_payload
+    product_title = payment_info.invoice_payload  # Здесь вы можете указать название товара, которое хотите получить
+
+
+    await bot.send_message(7773130966, f"Пользователь @{message.from_user.username} купил {product_title}")
     
